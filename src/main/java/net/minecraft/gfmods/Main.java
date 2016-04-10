@@ -43,6 +43,8 @@ public class Main {
 		
 		
 		EntityRegistry.registerModEntity(EntityTNTArrow.class, "TNTArrow", 1, this, 80, 3, true);
+		EntityRegistry.registerModEntity(EntityTeleportArrow.class, "TeleportArrow", 2, this, 80, 3, true);
+		
 
 	}
 	

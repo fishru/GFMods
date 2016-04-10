@@ -8,9 +8,7 @@ import net.minecraft.world.World;
 
 public class EntityTNTArrow extends EntityTippedArrow {
 	public int ticks = 0;
-	int i;
-	int j;
-	int k;
+	int i, j, k;
 	//public BlockPos pos = new BlockPos(this);
 
 	

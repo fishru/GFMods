@@ -1,7 +1,7 @@
 {
     "parent": "builtin/generated",
     "textures": {
-        "layer0": "items/arrow"
+        "layer0": "gfmods:items/teleportArrow"
     },
     "display": {
         "thirdperson": {

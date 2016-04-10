@@ -1,2 +1,4 @@
 item.tntArrow.name=TNT Arrow
+item.teleportArrow.name=Teleport Arrow
 entity.GFMods.TestArrow.name=TNTArrow
+entity.GFMods.TeleoirtArrow.name=TeleportArrow
