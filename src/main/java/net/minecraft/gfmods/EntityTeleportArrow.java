@@ -80,10 +80,12 @@ public class EntityTeleportArrow extends EntityTippedArrow {
 	@Override
     protected void arrowHit(EntityLivingBase living)
     {
+		if(!this.worldObj.isRemote) {
         super.arrowHit(living);
         ItemStack itemstack;
         itemstack = new ItemStack((Item)Item.itemRegistry.getObject(new ResourceLocation("gfmods:teleportArrow")));
         user.inventory.addItemStackToInventory(itemstack);
+		}
         
     }
 	

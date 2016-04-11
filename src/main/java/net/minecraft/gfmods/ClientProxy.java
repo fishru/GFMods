@@ -25,7 +25,7 @@ public class ClientProxy extends CommonProxy{
     public void registerRenderers() {
     	//RenderingRegistry.registerEntityRenderingHandler(EntityTNTArrow.class, new RenderTNTArrow(Minecraft.getMinecraft().getRenderManager()));
     	//RenderingRegistry.registerEntityRenderingHandler(EntityTNTArrow.class, new RenderTNTArrow(Minecraft.getMinecraft().getRenderManager()));
-    	RenderingRegistry.registerEntityRenderingHandler(EntityTNTArrow.class, RenderTNTArrow::new);
+    	//RenderingRegistry.registerEntityRenderingHandler(EntityTNTArrow.class, RenderTNTArrow::new);
     }
     @Override
     public void postInit(FMLPostInitializationEvent event) {
