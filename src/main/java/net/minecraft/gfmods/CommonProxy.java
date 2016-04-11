@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class CommonProxy {
@@ -16,8 +15,13 @@ public class CommonProxy {
     	
 		tntArrow = new TNTArrow();
 		teleportArrow = new TeleportArrow();
-		GameRegistry.registerItem(tntArrow, "tntArrow");
-		GameRegistry.registerItem(teleportArrow, "teleportArrow");
+		//GameRegistry.registerItem(tntArrow, "tntArrow");
+		//GameRegistry.registerItem(teleportArrow, "teleportArrow");
+		
+		//GameRegistry.register(tntArrow.getRegistryName() == null ? tntArrow.setRegistryName("gfmods:tntArrow") : tntArrow);
+		//GameRegistry.register(teleportArrow.getRegistryName() == null ? teleportArrow.setRegistryName("gfmods:teleportArrow") : teleportArrow);
+		GameRegistry.register(tntArrow.setRegistryName("gfmods:tntArrow"));
+		GameRegistry.register(teleportArrow.setRegistryName("gfmods:teleportArrow"));
     }
 
     public void init(FMLInitializationEvent e) {
