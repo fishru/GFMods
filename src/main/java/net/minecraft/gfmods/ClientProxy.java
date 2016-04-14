@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.projectile.EntityTippedArrow;
+import net.minecraft.gfmods.entities.EntityTNTArrow;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -16,6 +17,7 @@ public class ClientProxy extends CommonProxy{
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         
+        //RenderingRegistry.registerEntityRenderingHandler(EntityTNTArrow.class, RenderTNTArrow::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityTNTArrow.class, new IRenderFactory<EntityTNTArrow>() { // java 6/7
 		@Override
 		public Render<? super EntityTNTArrow> createRenderFor(RenderManager manager) {

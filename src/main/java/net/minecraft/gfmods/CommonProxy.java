@@ -1,5 +1,7 @@
 package net.minecraft.gfmods;
 
+import net.minecraft.gfmods.items.TNTArrow;
+import net.minecraft.gfmods.items.TeleportArrow;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

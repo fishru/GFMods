@@ -1,8 +1,8 @@
 package net.minecraft.gfmods;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.item.Item;
+import net.minecraft.gfmods.entities.EntityTNTArrow;
+import net.minecraft.gfmods.entities.EntityTeleportArrow;
+import net.minecraft.gfmods.entities.EntityWildPig;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -10,7 +10,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = Main.MODID, version = Main.VERSION, name = Main.NAME)
 public class Main {
@@ -44,6 +43,8 @@ public class Main {
 		
 		EntityRegistry.registerModEntity(EntityTNTArrow.class, "TNTArrow", 1, this, 80, 3, true);
 		EntityRegistry.registerModEntity(EntityTeleportArrow.class, "TeleportArrow", 2, this, 80, 3, true);
+		EntityRegistry.registerModEntity(EntityWildPig.class, "WildPig", 3, this, 80, 3, true, 1000, 2000);
+		
 		
 
 	}
