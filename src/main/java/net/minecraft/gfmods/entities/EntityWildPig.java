@@ -3,22 +3,24 @@ package net.minecraft.gfmods.entities;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IJumpingMount;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class EntityWildPig extends EntityPig{
+public class EntityWildPig extends EntityPig implements IJumpingMount{
 	
+	protected float jumpPower;
     private boolean field_184765_bx;
     private int field_184766_bz;
     private int field_184767_bA;
+    private boolean field_110294_bI;
 	
 	public EntityWildPig(World worldIn){
 		super(worldIn);
@@ -31,14 +33,64 @@ public class EntityWildPig extends EntityPig{
         Entity entity = this.getControllingPassenger();
         return entity instanceof EntityLivingBase;
     }
+	
+    public boolean canJump()
+    {
+        return this.getSaddled();
+    }
+    
+    public void func_184775_b(int p_184775_1_)
+    {
+        this.field_110294_bI = true;
+//        /this.makeHorseRear();
+    }
+
+    public void func_184777_r_()
+    {
+    }
+	
+    @SideOnly(Side.CLIENT)
+    public void setJumpPower(int jumpPowerIn)
+    {
+
+            if (jumpPowerIn < 0)
+            {
+                jumpPowerIn = 0;
+            }
+
+
+            if (jumpPowerIn >= 90)
+            {
+                this.jumpPower = 1.0F;
+            }
+            else
+            {
+                this.jumpPower = 0.4F + 0.4F * (float)jumpPowerIn / 90.0F;
+            }
+
+    }
+    
+    @Override
+    public void fall(float distance, float damageMultiplier)
+    {
+
+    }
     
 	@Override
 	public void moveEntityWithHeading(float strafe, float forward)
     {
 	       Entity entity = this.getPassengers().isEmpty() ? null : (Entity)this.getPassengers().get(0);
+	       
+
+	       
 
 	        if (this.isBeingRidden() && this.canBeSteered())
 	        {
+
+	        	/*
+	        	if(this.worldObj.isRemote)
+	        	System.out.println("forward_1: " + forward);
+	        	*/
 	            EntityLivingBase entitylivingbase = (EntityLivingBase)this.getControllingPassenger();
 	            this.prevRotationYaw = this.rotationYaw = entitylivingbase.rotationYaw;
 	            this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
@@ -46,8 +98,27 @@ public class EntityWildPig extends EntityPig{
 	            this.rotationYawHead = this.renderYawOffset = this.rotationYaw;
 	            strafe = entitylivingbase.moveStrafing * 0.5F;
 	            forward = entitylivingbase.moveForward;
+	            
+	            /*
+	            if(!this.worldObj.isRemote)
+	            System.out.println("forward_2: " + forward);
+	            */
 	            this.stepHeight = 1.0F;
 	            this.jumpMovementFactor = this.getAIMoveSpeed() * 0.1F;
+	            //this.fallDistance = 0;
+	            
+	            if (this.jumpPower > 0.0F && this.onGround) {
+	            	this.motionY = 2 * (double)this.jumpPower;
+	            	
+	                this.jumpPower = 0.0F;
+	                net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+	            }
+	            
+	            if (this.jumpPower > 0.0F && !this.onGround) {
+	            	this.jumpPower = 3.0F;
+	            	this.motionY = -1.5 * (double)this.jumpPower;
+	            	this.jumpPower = 0.0F;
+	            }
 
 	            if (this.canPassengerSteer())
 	            {
@@ -91,7 +162,8 @@ public class EntityWildPig extends EntityPig{
 	        {
 	            this.stepHeight = 0.5F;
 	            this.jumpMovementFactor = 0.02F;
-	            super.moveEntityWithHeading(strafe, forward);
+	            //super.moveEntityWithHeading(strafe, forward);
+	            moveHeading(strafe, forward);
 	        }
     }
 	
@@ -156,7 +228,7 @@ public class EntityWildPig extends EntityPig{
 	                            if (f5 > 0.0F)
 	                            {
 	                                this.playSound(this.getFallSound((int)f5), 1.0F, 1.0F);
-	                                this.attackEntityFrom(DamageSource.flyIntoWall, f5);
+	                                //this.attackEntityFrom(DamageSource.flyIntoWall, f5);
 	                            }
 	                        }
 
