@@ -7,6 +7,7 @@ import net.minecraft.entity.IJumpingMount;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.init.MobEffects;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -21,6 +22,7 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
     private int field_184766_bz;
     private int field_184767_bA;
     private boolean field_110294_bI;
+    int ticks = 0 ;
 	
 	public EntityWildPig(World worldIn){
 		super(worldIn);
@@ -81,6 +83,7 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
     {
 	       Entity entity = this.getPassengers().isEmpty() ? null : (Entity)this.getPassengers().get(0);
 	       
+	       
 
 	       
 
@@ -91,6 +94,7 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	        	if(this.worldObj.isRemote)
 	        	System.out.println("forward_1: " + forward);
 	        	*/
+	        	
 	            EntityLivingBase entitylivingbase = (EntityLivingBase)this.getControllingPassenger();
 	            this.prevRotationYaw = this.rotationYaw = entitylivingbase.rotationYaw;
 	            this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
@@ -106,6 +110,22 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	            this.stepHeight = 1.0F;
 	            this.jumpMovementFactor = this.getAIMoveSpeed() * 0.1F;
 	            //this.fallDistance = 0;
+	            
+	        	if (entity.worldObj.isRemote) {
+	        		if(entity.isSprinting()) {
+	        			//System.out.println("Sprinting!!");
+	        			this.setSprinting(true);
+	        			Vec3d vec3d = this.getLookVec();
+	        			this.motionZ += vec3d.zCoord * 0.1;
+	        			this.motionX += vec3d.xCoord * 0.1;
+	        			
+
+	        				this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
+
+	        		} else {
+	        			this.setSprinting(false);
+	        		}
+	        	}
 	            
 	            if (this.jumpPower > 0.0F && this.onGround) {
 	            	this.motionY = 2 * (double)this.jumpPower;
