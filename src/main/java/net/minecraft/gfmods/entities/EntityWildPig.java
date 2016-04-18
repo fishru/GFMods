@@ -83,10 +83,6 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
     {
 	       Entity entity = this.getPassengers().isEmpty() ? null : (Entity)this.getPassengers().get(0);
 	       
-	       
-
-	       
-
 	        if (this.isBeingRidden() && this.canBeSteered())
 	        {
 
@@ -118,9 +114,7 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	        			Vec3d vec3d = this.getLookVec();
 	        			this.motionZ += vec3d.zCoord * 0.1;
 	        			this.motionX += vec3d.xCoord * 0.1;
-	        			
-
-	        				this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
+	        		    this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
 
 	        		} else {
 	        			this.setSprinting(false);
