@@ -44,7 +44,7 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
     public void func_184775_b(int p_184775_1_)
     {
         this.field_110294_bI = true;
-//        /this.makeHorseRear();
+        //this.makeHorseRear();
     }
 
     public void func_184777_r_()
