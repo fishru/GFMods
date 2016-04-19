@@ -10,6 +10,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,6 +24,10 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
     private int field_184767_bA;
     private boolean field_110294_bI;
     int ticks = 0 ;
+    RayTraceResult rayHit;
+    
+    BlockPos rayBlockPos;
+    BlockPos destroyPos;
 	
 	public EntityWildPig(World worldIn){
 		super(worldIn);
@@ -85,15 +90,11 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	       
 	        if (this.isBeingRidden() && this.canBeSteered())
 	        {
-
-	        	/*
-	        	if(this.worldObj.isRemote)
-	        	System.out.println("forward_1: " + forward);
-	        	*/
-	        	
+	        	//System.out.println("Is being ridden!!");
 	            EntityLivingBase entitylivingbase = (EntityLivingBase)this.getControllingPassenger();
 	            this.prevRotationYaw = this.rotationYaw = entitylivingbase.rotationYaw;
 	            this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
+	            //this.rotationPitch = 0;
 	            this.setRotation(this.rotationYaw, this.rotationPitch);
 	            this.rotationYawHead = this.renderYawOffset = this.rotationYaw;
 	            strafe = entitylivingbase.moveStrafing * 0.5F;
@@ -107,19 +108,41 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	            this.jumpMovementFactor = this.getAIMoveSpeed() * 0.1F;
 	            //this.fallDistance = 0;
 	            
-	        	if (entity.worldObj.isRemote) {
-	        		if(entity.isSprinting()) {
+	        	//if (entity.worldObj.isRemote) {
+	        		if(entity.isSprinting() && this.onGround) {
+	        			System.out.println("Player Sprinting!!");
+	        			this.setRotation(this.rotationYaw, 0);
+	        			float f6 = 1.6F;
 	        			//System.out.println("Sprinting!!");
 	        			this.setSprinting(true);
+	        			//System.out.println("Sprinting!!");
+	        			/*
 	        			Vec3d vec3d = this.getLookVec();
+	        			System.out.println("zCoord: " + vec3d.zCoord);
+	        			
 	        			this.motionZ += vec3d.zCoord * 0.1;
 	        			this.motionX += vec3d.xCoord * 0.1;
+	        			
 	        		    this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
+	        		    */
+	        			//System.out.println("motionX:" + this.motionX);
+	        			//System.out.println("motionZ:" + this.motionZ);
+                        this.motionX *= (double)f6;
+                        this.motionZ *= (double)f6;
+                        
+    	        		if(this.isCollidedHorizontally){
+    	        			rayHit = this.rayTrace(1, 1);
+    	        			rayBlockPos = rayHit.getBlockPos();
+    	        			destroyPos = new BlockPos(this.posX, this.posY + 2, this.posZ);
+    	        			destroyBlock(destroyPos);
+    	        			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, rayBlockPos.getX(), this.posY + 3, rayBlockPos.getZ(), 0.0D, 0.0D, 0.0D, new int[2]);
+    	        		}
+                        
 
 	        		} else {
 	        			this.setSprinting(false);
 	        		}
-	        	}
+	        	//}
 	            
 	            if (this.jumpPower > 0.0F && this.onGround) {
 	            	this.motionY = 2 * (double)this.jumpPower;
@@ -179,6 +202,8 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	            //super.moveEntityWithHeading(strafe, forward);
 	            moveHeading(strafe, forward);
 	        }
+	        
+			
     }
 	
 	
@@ -190,69 +215,6 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	            {
 	                if (!this.isInLava())
 	                {
-	                    if (this.isElytraFlying())
-	                    {
-	                        if (this.motionY > -0.5D)
-	                        {
-	                            this.fallDistance = 1.0F;
-	                        }
-
-	                        Vec3d vec3d = this.getLookVec();
-	                        float f = this.rotationPitch * 0.017453292F;
-	                        double d6 = Math.sqrt(vec3d.xCoord * vec3d.xCoord + vec3d.zCoord * vec3d.zCoord);
-	                        double d8 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-	                        double d1 = vec3d.lengthVector();
-	                        float f4 = MathHelper.cos(f);
-	                        f4 = (float)((double)f4 * (double)f4 * Math.min(1.0D, d1 / 0.4D));
-	                        this.motionY += -0.08D + (double)f4 * 0.06D;
-
-	                        if (this.motionY < 0.0D && d6 > 0.0D)
-	                        {
-	                            double d2 = this.motionY * -0.1D * (double)f4;
-	                            this.motionY += d2;
-	                            this.motionX += vec3d.xCoord * d2 / d6;
-	                            this.motionZ += vec3d.zCoord * d2 / d6;
-	                        }
-
-	                        if (f < 0.0F)
-	                        {
-	                            double d9 = d8 * (double)(-MathHelper.sin(f)) * 0.04D;
-	                            this.motionY += d9 * 3.2D;
-	                            this.motionX -= vec3d.xCoord * d9 / d6;
-	                            this.motionZ -= vec3d.zCoord * d9 / d6;
-	                        }
-
-	                        if (d6 > 0.0D)
-	                        {
-	                            this.motionX += (vec3d.xCoord / d6 * d8 - this.motionX) * 0.1D;
-	                            this.motionZ += (vec3d.zCoord / d6 * d8 - this.motionZ) * 0.1D;
-	                        }
-
-	                        this.motionX *= 0.9900000095367432D;
-	                        this.motionY *= 0.9800000190734863D;
-	                        this.motionZ *= 0.9900000095367432D;
-	                        this.moveEntity(this.motionX, this.motionY, this.motionZ);
-
-	                        if (this.isCollidedHorizontally && !this.worldObj.isRemote)
-	                        {
-	                            double d10 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-	                            double d3 = d8 - d10;
-	                            float f5 = (float)(d3 * 10.0D - 3.0D);
-
-	                            if (f5 > 0.0F)
-	                            {
-	                                this.playSound(this.getFallSound((int)f5), 1.0F, 1.0F);
-	                                //this.attackEntityFrom(DamageSource.flyIntoWall, f5);
-	                            }
-	                        }
-
-	                        if (this.onGround && !this.worldObj.isRemote)
-	                        {
-	                            this.setFlag(7, false);
-	                        }
-	                    }
-	                    else
-	                    {
 	                        float f6 = 0.91F;
 	                        BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain(this.posX, this.getEntityBoundingBox().minY - 1.0D, this.posZ);
 
@@ -318,7 +280,7 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	                        this.motionX *= (double)f6;
 	                        this.motionZ *= (double)f6;
 	                        blockpos$pooledmutableblockpos.release();
-	                    }
+	                    
 	                }
 	                else
 	                {
@@ -386,6 +348,19 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	        this.limbSwingAmount += (f10 - this.limbSwingAmount) * 0.4F;
 	        this.limbSwing += this.limbSwingAmount;
 	    }
+	   
+	   
+		public void destroyBlock(BlockPos pos){
+			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
+	        for(int i =-2; i <=2; i=i+1){
+	        	for(int j =-2; j <= 2; j=j+1){
+	        		for(int k=-2 ; k <= 2; k=k+1){
+	        			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
+	        			this.worldObj.destroyBlock(pos.add(i, j, k), true);
+	        		}
+	        	}
+	        }
+		}
 	
 
 
