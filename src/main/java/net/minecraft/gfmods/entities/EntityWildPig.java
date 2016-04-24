@@ -1,22 +1,25 @@
 package net.minecraft.gfmods.entities;
 
+import org.lwjgl.input.Keyboard;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.IJumpingMount;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.gfmods.Main;
+import net.minecraft.gfmods.MyMessage;
 import net.minecraft.init.MobEffects;
+import net.minecraft.stats.StatBase;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class EntityWildPig extends EntityPig implements IJumpingMount{
+public class EntityWildPig extends EntityPig{
 	
 	protected float jumpPower;
     private boolean field_184765_bx;
@@ -25,6 +28,10 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
     private boolean field_110294_bI;
     int ticks = 0 ;
     RayTraceResult rayHit;
+    boolean first_jump_completed = false;
+    boolean second_jump_completed = false;
+    boolean move_lock = false;
+    
     
     BlockPos rayBlockPos;
     BlockPos destroyPos;
@@ -41,10 +48,12 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
         return entity instanceof EntityLivingBase;
     }
 	
+	/*
     public boolean canJump()
     {
         return this.getSaddled();
     }
+    
     
     public void func_184775_b(int p_184775_1_)
     {
@@ -76,6 +85,7 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
             }
 
     }
+    */
     
     @Override
     public void fall(float distance, float damageMultiplier)
@@ -90,31 +100,29 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	       
 	        if (this.isBeingRidden() && this.canBeSteered())
 	        {
+	        	
 	        	//System.out.println("Is being ridden!!");
-	            EntityLivingBase entitylivingbase = (EntityLivingBase)this.getControllingPassenger();
-	            this.prevRotationYaw = this.rotationYaw = entitylivingbase.rotationYaw;
-	            this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
-	            //this.rotationPitch = 0;
-	            this.setRotation(this.rotationYaw, this.rotationPitch);
-	            this.rotationYawHead = this.renderYawOffset = this.rotationYaw;
-	            strafe = entitylivingbase.moveStrafing * 0.5F;
-	            forward = entitylivingbase.moveForward;
+	        	EntityLivingBase entitylivingbase = (EntityLivingBase)this.getControllingPassenger();
+	        	this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
+	        	//this.setpos = entitylivingbase.motionY;
+	        	//this.jumpMovementFactor = 0.1F;
 	            
 	            /*
 	            if(!this.worldObj.isRemote)
 	            System.out.println("forward_2: " + forward);
 	            */
 	            this.stepHeight = 1.0F;
-	            this.jumpMovementFactor = this.getAIMoveSpeed() * 0.1F;
+	            this.jumpMovementFactor = this.getAIMoveSpeed() * 0.25F;
 	            //this.fallDistance = 0;
 	            
 	        	//if (entity.worldObj.isRemote) {
 	        		if(entity.isSprinting() && this.onGround) {
-	        			System.out.println("Player Sprinting!!");
+	        			//System.out.println("Player Sprinting!!");
 	        			this.setRotation(this.rotationYaw, 0);
 	        			float f6 = 1.6F;
 	        			//System.out.println("Sprinting!!");
 	        			this.setSprinting(true);
+	        			
 	        			//System.out.println("Sprinting!!");
 	        			/*
 	        			Vec3d vec3d = this.getLookVec();
@@ -122,28 +130,53 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	        			
 	        			this.motionZ += vec3d.zCoord * 0.1;
 	        			this.motionX += vec3d.xCoord * 0.1;
-	        			
+	        			*/
 	        		    this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
-	        		    */
+	        		    
 	        			//System.out.println("motionX:" + this.motionX);
 	        			//System.out.println("motionZ:" + this.motionZ);
                         this.motionX *= (double)f6;
                         this.motionZ *= (double)f6;
                         
     	        		if(this.isCollidedHorizontally){
-    	        			rayHit = this.rayTrace(1, 1);
-    	        			rayBlockPos = rayHit.getBlockPos();
-    	        			destroyPos = new BlockPos(this.posX, this.posY + 2, this.posZ);
-    	        			destroyBlock(destroyPos);
-    	        			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, rayBlockPos.getX(), this.posY + 3, rayBlockPos.getZ(), 0.0D, 0.0D, 0.0D, new int[2]);
-    	        		}
+    	        			ticks++;
+    	        			this.setRotation(0, 0);
+    	        			//System.out.println("limbswing: " + this.limbSwing);
+    	        			this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
+    	        			if(ticks == 25) {
+    	        				rayHit = this.rayTrace(3, 1);
+        	        			rayBlockPos = rayHit.getBlockPos();
+        	        			//destroyPos = new BlockPos(this.posX, this.posY + 2, this.posZ);
+        	        			Main.network.sendToServer(new MyMessage(rayBlockPos.getX(), rayBlockPos.getY()+2, rayBlockPos.getZ()));
+        	        			//System.out.println("Coords:" + rayBlockPos.getX() + "," + rayBlockPos.getY()+2 + "," + rayBlockPos.getZ());
+        	        			//destroyBlock(destroyPos);
+        	        			
+        	        			ticks = 0;
+    	        			}
+    	        		} else ticks = 0;
                         
 
 	        		} else {
 	        			this.setSprinting(false);
+	        			ticks = 0;
 	        		}
+	        		
+	        		if(entity.isSprinting() && !this.onGround) {
+	        			this.jumpMovementFactor = this.getAIMoveSpeed() * 1F;
+	        		}
+	        		
+	        		
+		            
+		            this.prevRotationYaw = this.rotationYaw = entitylivingbase.rotationYaw;
+		            
+		            //this.rotationPitch = 0;
+		            this.setRotation(this.rotationYaw, this.rotationPitch);
+		            this.rotationYawHead = this.renderYawOffset = this.rotationYaw;
+		            strafe = entitylivingbase.moveStrafing * 0.5F;
+		            forward = entitylivingbase.moveForward;
 	        	//}
 	            
+		        /*
 	            if (this.jumpPower > 0.0F && this.onGround) {
 	            	this.motionY = 2 * (double)this.jumpPower;
 	            	
@@ -156,6 +189,84 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	            	this.motionY = -1.5 * (double)this.jumpPower;
 	            	this.jumpPower = 0.0F;
 	            }
+	            */
+		            boolean jumpKeyDown =Keyboard.isKeyDown(Keyboard.KEY_SPACE);
+		            if (this.worldObj.isRemote) {
+		            	
+		            	if (this.onGround && jumpKeyDown && !move_lock){
+			            	this.motionY = 1;
+			            	first_jump_completed = false;
+			            	System.out.println("Jump 1");
+			            }
+			            
+			            if (!jumpKeyDown){
+			            	if (this.onGround) {
+			            		first_jump_completed = false;
+			            		System.out.println("Jump 2-1");
+			            	}else {
+				            	first_jump_completed = true;
+				            	System.out.println("Jump 2-2");	
+			            	}
+			            }
+			            
+			            if (first_jump_completed){
+			            	if(jumpKeyDown){
+			            		if(!this.onGround) {
+				            		this.jumpPower = 3.0F;
+					            	this.motionY = -1.5 * (double)this.jumpPower;
+					            	System.out.println("Jump 3");
+					            	second_jump_completed = false;
+					            	move_lock = true;
+			            		} else {
+					                this.motionX = 0.0D;
+					                this.motionZ = 0.0D;
+					                strafe = 0;
+						            forward = 0;
+						            entity.setSprinting(false);
+						            Main.network.sendToServer(new MyMessage((int)this.posX, (int)this.posY, (int)this.posZ));
+						            second_jump_completed = true;
+				            		System.out.println("Jump 4-1");
+			            		}
+
+			            	} else {
+			            		if(this.onGround) {
+				            		move_lock = false;
+				            		System.out.println("Jump 4-2");
+			            		}
+			            	}
+			            }
+			            
+			            /*
+			            if (this.onGround && first_jump_completed && !second_jump_completed) {
+			            	if (jumpKeyDown) {
+			            		move_lock = true;
+				                this.motionX = 0.0D;
+				                this.motionZ = 0.0D;
+				                strafe = 0;
+					            forward = 0;
+					            entity.setSprinting(false);
+					            Main.network.sendToServer(new MyMessage((int)this.posX, (int)this.posY, (int)this.posZ));
+					            second_jump_completed = true;
+			            		System.out.println("Jump 4-1");
+			            	} else{
+			            		move_lock = false;
+			            		System.out.println("Jump 4-2");
+			            	}
+			            }
+			            */
+
+			            
+		            }
+		            
+		            
+
+		            
+		            net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+		            /*
+		            if(this.mc.gameSettings.keyBindChat.isPressed()) {
+		            	System.out.println("Chat key is pressed!!");
+		            }
+		            */
 
 	            if (this.canPassengerSteer())
 	            {
@@ -349,18 +460,34 @@ public class EntityWildPig extends EntityPig implements IJumpingMount{
 	        this.limbSwing += this.limbSwingAmount;
 	    }
 	   
+	    /**
+	     * Add a stat once
+	     */
+	    public void addStat(StatBase stat)
+	    {
+	        this.addStat(stat, 1);
+	    }
+
+	    /**
+	     * Adds a value to a statistic field.
+	     */
+	    public void addStat(StatBase stat, int amount)
+	    {
+	    }
+
+	    public void takeStat(StatBase stat)
+	    {
+	    }
 	   
-		public void destroyBlock(BlockPos pos){
-			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
-	        for(int i =-2; i <=2; i=i+1){
-	        	for(int j =-2; j <= 2; j=j+1){
-	        		for(int k=-2 ; k <= 2; k=k+1){
-	        			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
-	        			this.worldObj.destroyBlock(pos.add(i, j, k), true);
-	        		}
-	        	}
-	        }
-		}
+	   
+	    public void jump()
+	    {
+	        super.jump();
+	        this.addStat(StatList.jump);
+	    }
+	   
+	   
+
 	
 
 
