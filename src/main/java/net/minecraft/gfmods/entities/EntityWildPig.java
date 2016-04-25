@@ -150,7 +150,7 @@ public class EntityWildPig extends EntityPig{
     	        				rayHit = this.rayTrace(3, 1);
         	        			rayBlockPos = rayHit.getBlockPos();
         	        			//destroyPos = new BlockPos(this.posX, this.posY + 2, this.posZ);
-        	        			Main.network.sendToServer(new MyMessage(rayBlockPos.getX(), rayBlockPos.getY()+2, rayBlockPos.getZ()));
+        	        			Main.network.sendToServer(new MyMessage(rayBlockPos.getX(), rayBlockPos.getY()+1, rayBlockPos.getZ()));
         	        			//System.out.println("Coords:" + rayBlockPos.getX() + "," + rayBlockPos.getY()+2 + "," + rayBlockPos.getZ());
         	        			//destroyBlock(destroyPos);
         	        			
