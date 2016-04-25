@@ -26,11 +26,14 @@ public class EntityWildPig extends EntityPig{
     private int field_184766_bz;
     private int field_184767_bA;
     private boolean field_110294_bI;
+
     int ticks = 0 ;
     RayTraceResult rayHit;
-    boolean first_jump_completed = false;
+    boolean jumped = false;
+    boolean striking = false;
     boolean second_jump_completed = false;
     boolean move_lock = false;
+    boolean strike_done = false;
     
     
     BlockPos rayBlockPos;
@@ -143,7 +146,7 @@ public class EntityWildPig extends EntityPig{
     	        			this.setRotation(0, 0);
     	        			//System.out.println("limbswing: " + this.limbSwing);
     	        			this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
-    	        			if(ticks == 25) {
+    	        			if(ticks == 12) {
     	        				rayHit = this.rayTrace(3, 1);
         	        			rayBlockPos = rayHit.getBlockPos();
         	        			//destroyPos = new BlockPos(this.posX, this.posY + 2, this.posZ);
@@ -176,86 +179,60 @@ public class EntityWildPig extends EntityPig{
 		            forward = entitylivingbase.moveForward;
 	        	//}
 	            
-		        /*
-	            if (this.jumpPower > 0.0F && this.onGround) {
-	            	this.motionY = 2 * (double)this.jumpPower;
-	            	
-	                this.jumpPower = 0.0F;
-	                net.minecraftforge.common.ForgeHooks.onLivingJump(this);
-	            }
-	            
-	            if (this.jumpPower > 0.0F && !this.onGround) {
-	            	this.jumpPower = 3.0F;
-	            	this.motionY = -1.5 * (double)this.jumpPower;
-	            	this.jumpPower = 0.0F;
-	            }
-	            */
-		            boolean jumpKeyDown =Keyboard.isKeyDown(Keyboard.KEY_SPACE);
+		            
 		            if (this.worldObj.isRemote) {
-		            	
-		            	if (this.onGround && jumpKeyDown && !move_lock){
+		                boolean jumpKeyDown = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
+		                boolean strikeKeyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN);
+		                
+		            	if (this.onGround && jumpKeyDown && !strikeKeyDown && !striking){
 			            	this.motionY = 1;
-			            	first_jump_completed = false;
-			            	System.out.println("Jump 1");
+			            	//first_jump_completed = false;
+			            	//jumped = true;
+			            	System.out.println("Jumped");
 			            }
-			            
-			            if (!jumpKeyDown){
-			            	if (this.onGround) {
-			            		first_jump_completed = false;
-			            		System.out.println("Jump 2-1");
-			            	}else {
-				            	first_jump_completed = true;
-				            	System.out.println("Jump 2-2");	
-			            	}
-			            }
-			            
-			            if (first_jump_completed){
-			            	if(jumpKeyDown){
-			            		if(!this.onGround) {
-				            		this.jumpPower = 3.0F;
-					            	this.motionY = -1.5 * (double)this.jumpPower;
-					            	System.out.println("Jump 3");
-					            	second_jump_completed = false;
-					            	move_lock = true;
-			            		} else {
-					                this.motionX = 0.0D;
-					                this.motionZ = 0.0D;
-					                strafe = 0;
-						            forward = 0;
-						            entity.setSprinting(false);
-						            Main.network.sendToServer(new MyMessage((int)this.posX, (int)this.posY, (int)this.posZ));
-						            second_jump_completed = true;
-				            		System.out.println("Jump 4-1");
-			            		}
-
-			            	} else {
-			            		if(this.onGround) {
-				            		move_lock = false;
-				            		System.out.println("Jump 4-2");
-			            		}
-			            	}
-			            }
-			            
-			            /*
-			            if (this.onGround && first_jump_completed && !second_jump_completed) {
-			            	if (jumpKeyDown) {
-			            		move_lock = true;
-				                this.motionX = 0.0D;
-				                this.motionZ = 0.0D;
-				                strafe = 0;
-					            forward = 0;
-					            entity.setSprinting(false);
-					            Main.network.sendToServer(new MyMessage((int)this.posX, (int)this.posY, (int)this.posZ));
-					            second_jump_completed = true;
-			            		System.out.println("Jump 4-1");
-			            	} else{
-			            		move_lock = false;
-			            		System.out.println("Jump 4-2");
-			            	}
-			            }
-			            */
-
-			            
+		            	
+		            	
+		            	if(!this.onGround && !jumpKeyDown && strikeKeyDown && !striking &&  !strike_done) {
+		            		this.jumpPower = 3.0F;
+			            	this.motionY = -1.5 * (double)this.jumpPower;
+		            		this.motionX = 0.0D;
+			                this.motionZ = 0.0D;
+			                strafe = 0;
+				            forward = 0;
+				            entity.setSprinting(false);
+			            	striking = true;
+			            	System.out.println("Strikng_1!!");
+		            	}
+		            	
+		            	if(!strikeKeyDown) {
+		            		striking = false;
+		            		strike_done = false;
+		            	}
+		            	
+		            	if(this.onGround && strikeKeyDown && striking && !strike_done) {
+		            		this.motionX = 0.0D;
+			                this.motionZ = 0.0D;
+			                strafe = 0;
+				            forward = 0;
+				            entity.setSprinting(false);
+				            Main.network.sendToServer(new MyMessage((int)this.posX, (int)this.posY, (int)this.posZ));
+				            System.out.println("Strikng_2!!");
+				            strike_done = true;
+				            striking = false;
+		            	}
+		            	
+		            	if(this.onGround && strikeKeyDown && !striking && strike_done) {
+		            		
+		            		this.motionX = 0.0D;
+			                this.motionZ = 0.0D;
+			                entity.motionX = 0.0D;
+			                entity.motionZ = 0.0D;
+			                strafe = 0;
+				            forward = 0;
+				            entity.setSprinting(false);
+				            //strike_done = false;
+				            System.out.println("Have striken!");
+		            	}        
 		            }
 		            
 		            
