@@ -182,7 +182,7 @@ public class EntityWildPig extends EntityPig{
 		            
 		            if (this.worldObj.isRemote) {
 		                boolean jumpKeyDown = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
-		                boolean strikeKeyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN);
+		                boolean strikeKeyDown = Keyboard.isKeyDown(Keyboard.KEY_X);
 		                
 		            	if (this.onGround && jumpKeyDown && !strikeKeyDown && !striking){
 			            	this.motionY = 1;

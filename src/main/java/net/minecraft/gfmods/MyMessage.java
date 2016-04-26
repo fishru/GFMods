@@ -69,9 +69,9 @@ public class MyMessage implements IMessage {
 		
 		public void destroyBlock(BlockPos pos, World world){
 			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
-	        for(int i =-2; i <=2; i=i+1){
-	        	for(int j =-2; j <= 2; j=j+1){
-	        		for(int k=-2 ; k <= 2; k=k+1){
+	        for(int i =-1; i <=1; i=i+1){
+	        	for(int j =-1; j <= 1; j=j+1){
+	        		for(int k=-1 ; k <= 1; k=k+1){
 	        			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
 	        			world.destroyBlock(pos.add(i, j, k), true);
 	        		}
