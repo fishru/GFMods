@@ -188,7 +188,6 @@ public class EntityWildPig extends EntityPig{
 			            	this.motionY = 1;
 			            	//first_jump_completed = false;
 			            	//jumped = true;
-			            	System.out.println("Jumped");
 			            }
 		            	
 		            	
@@ -201,7 +200,6 @@ public class EntityWildPig extends EntityPig{
 				            forward = 0;
 				            entity.setSprinting(false);
 			            	striking = true;
-			            	System.out.println("Strikng_1!!");
 		            	}
 		            	
 		            	if(!strikeKeyDown) {
@@ -217,11 +215,13 @@ public class EntityWildPig extends EntityPig{
 				            entity.setSprinting(false);
 				            //destroyBlock(this.getPosition());
 				            BlockPos pos = this.getPosition();
-				            //不能直接使用this.posX, this.posY和this.posZ，因為它們不是BlockPos(int)。並且pos(double)的負值永遠比BlockPos的負值多+1。
-				            //所以遇到負的座標值時，不可能準確鎖定要影響的方塊的位置。以下是錯誤範例：
-				            //Main.network.sendToServer(new MyMessage((int)this.posX, (int)this.posY, (int)this.posZ));
+				            /*
+				                         不能直接使用this.posX, this.posY和this.posZ，因為它們不是BlockPos(int)。
+				                         並且pos(double)的負值永遠比BlockPos的負值多+1。
+				                         所以遇到負的座標值時，不可能準確鎖定要影響的方塊的位置。以下是錯誤範例：
+				            Main.network.sendToServer(new MyMessage((int)this.posX, (int)this.posY, (int)this.posZ));
+				            */
 				            Main.network.sendToServer(new MyMessage(pos.getX(), pos.getY(), pos.getZ()));
-				            System.out.println("Strikng_2!!");
 				            strike_done = true;
 				            striking = false;
 		            	}
@@ -236,7 +236,6 @@ public class EntityWildPig extends EntityPig{
 				            forward = 0;
 				            entity.setSprinting(false);
 				            //strike_done = false;
-				            System.out.println("Have striken!");
 		            	}        
 		            }
 		            
@@ -467,22 +466,5 @@ public class EntityWildPig extends EntityPig{
 	        super.jump();
 	        this.addStat(StatList.jump);
 	    }
-	   
-		public void destroyBlock(BlockPos pos){
-			System.out.println("Target: " + pos.getX() + ", " + pos.getY() + ", " + pos.getZ());
-			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
-	        for(int i =-1; i <=1; i=i+1){
-	        	for(int j =-1; j <= 1; j=j+1){
-	        		for(int k=-1 ; k <= 1; k=k+1){
-	        			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
-	        			System.out.println("client want to destroy: " + pos.add(i, j, k).getX() + ", " + pos.add(i, j, k).getY() + ", " + pos.add(i, j, k).getZ());
-	        			//this.worldObj.destroyBlock(pos.add(i, j, k), true);
-	        		}
-	        	}
-	        }
-		}
-
-	
-
 
 }
