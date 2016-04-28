@@ -34,6 +34,7 @@ public class EntityWildPig extends EntityPig{
     boolean second_jump_completed = false;
     boolean move_lock = false;
     boolean strike_done = false;
+    Minecraft mc = Minecraft.getMinecraft();
     
     
     BlockPos rayBlockPos;
@@ -181,7 +182,10 @@ public class EntityWildPig extends EntityPig{
 	            
 		            
 		            if (this.worldObj.isRemote) {
-		                boolean jumpKeyDown = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
+		            	//mc = Minecraft.getMinecraft();
+		            	
+		                //boolean jumpKeyDown = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
+		            	boolean jumpKeyDown = mc.gameSettings.keyBindJump.isKeyDown();
 		                boolean strikeKeyDown = Keyboard.isKeyDown(Keyboard.KEY_X);
 		                
 		            	if (this.onGround && jumpKeyDown && !strikeKeyDown && !striking){
