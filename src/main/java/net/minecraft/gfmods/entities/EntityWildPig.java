@@ -3,6 +3,7 @@ package net.minecraft.gfmods.entities;
 import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -110,7 +111,13 @@ public class EntityWildPig extends EntityPig{
 	        	this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
 	        	//this.setpos = entitylivingbase.motionY;
 	        	//this.jumpMovementFactor = 0.1F;
-	            
+	        	if(this.worldObj.isRemote){
+		        	int i = 61680;
+		            int j = i % 65536;
+		            int k = i / 65536;
+		            OpenGlHelper.setLightmapTextureCoords(33985, (float)j, (float)k);
+	        	}
+
 	            /*
 	            if(!this.worldObj.isRemote)
 	            System.out.println("forward_2: " + forward);

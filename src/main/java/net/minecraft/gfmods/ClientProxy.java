@@ -1,16 +1,19 @@
 package net.minecraft.gfmods;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.gfmods.entities.EntityTNTArrow;
+import net.minecraft.gfmods.entities.EntityWildPig;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import render.RenderTNTArrow;
+import render.RenderWildPig;
 
 public class ClientProxy extends CommonProxy{
     @Override
@@ -18,12 +21,20 @@ public class ClientProxy extends CommonProxy{
         super.preInit(event);
         
         //RenderingRegistry.registerEntityRenderingHandler(EntityTNTArrow.class, RenderTNTArrow::new);
-		RenderingRegistry.registerEntityRenderingHandler(EntityTNTArrow.class, new IRenderFactory<EntityTNTArrow>() { // java 6/7
-		@Override
-		public Render<? super EntityTNTArrow> createRenderFor(RenderManager manager) {
-			return new RenderTNTArrow(manager);
-		}
-	});
+		
+        RenderingRegistry.registerEntityRenderingHandler(EntityTNTArrow.class, new IRenderFactory<EntityTNTArrow>() { // java 6/7
+        	@Override
+        	public Render<? super EntityTNTArrow> createRenderFor(RenderManager manager) {
+        		return new RenderTNTArrow(manager);
+        	}
+	    });
+        
+        RenderingRegistry.registerEntityRenderingHandler(EntityWildPig.class, new IRenderFactory<EntityWildPig>() {
+        	@Override
+        	public Render<? super EntityWildPig> createRenderFor(RenderManager renderManagerIn) {
+        		return new RenderWildPig(renderManagerIn);
+        	}
+        });
     }
 
     @Override
