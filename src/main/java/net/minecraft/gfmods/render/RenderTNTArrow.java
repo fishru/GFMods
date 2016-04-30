@@ -1,4 +1,4 @@
-package net.minecraft.gfmods;
+package net.minecraft.gfmods.render;
 
 import net.minecraft.client.renderer.entity.RenderArrow;
 import net.minecraft.client.renderer.entity.RenderManager;

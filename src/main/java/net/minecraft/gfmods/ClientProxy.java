@@ -7,13 +7,13 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.gfmods.entities.EntityTNTArrow;
 import net.minecraft.gfmods.entities.EntityWildPig;
+import net.minecraft.gfmods.render.RenderTNTArrow;
+import net.minecraft.gfmods.render.RenderWildPig;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import render.RenderTNTArrow;
-import render.RenderWildPig;
 
 public class ClientProxy extends CommonProxy{
     @Override
