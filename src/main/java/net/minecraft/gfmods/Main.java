@@ -19,7 +19,7 @@ public class Main {
 	@SidedProxy(clientSide="net.minecraft.gfmods.ClientProxy", serverSide="net.minecraft.gfmods.ServerProxy")
 	public static CommonProxy proxy;
 	public static final String MODID = "GFMods";
-	public static final String VERSION = "1.0";
+	public static final String VERSION = "1.2.1";
 	public static final String NAME = "gfmods";
 	public static SimpleNetworkWrapper network;
 	//public static Item tntArrow;

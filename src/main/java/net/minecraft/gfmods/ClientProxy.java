@@ -1,7 +1,6 @@
 package net.minecraft.gfmods;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -9,6 +8,7 @@ import net.minecraft.gfmods.entities.EntityTNTArrow;
 import net.minecraft.gfmods.entities.EntityWildPig;
 import net.minecraft.gfmods.render.RenderTNTArrow;
 import net.minecraft.gfmods.render.RenderWildPig;
+import net.minecraft.item.Item;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -44,6 +44,9 @@ public class ClientProxy extends CommonProxy{
 		register(tntArrow, 0, new ModelResourceLocation("gfmods:tntArrow", "inventory"));
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().
 		register(teleportArrow, 0, new ModelResourceLocation("gfmods:teleportArrow", "inventory"));
+        
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().
+		register(Item.getItemFromBlock(wildpigBlock), 0, new ModelResourceLocation("gfmods:wildpigBlock", "inventory"));
         
         
 

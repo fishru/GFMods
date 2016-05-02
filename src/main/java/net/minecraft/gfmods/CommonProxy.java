@@ -1,9 +1,13 @@
 package net.minecraft.gfmods;
 
+import net.minecraft.block.Block;
+import net.minecraft.gfmods.blocks.WildPigBlock;
 import net.minecraft.gfmods.items.TNTArrow;
 import net.minecraft.gfmods.items.TeleportArrow;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -13,10 +17,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class CommonProxy {
 	public static Item tntArrow;
 	public static Item teleportArrow;
+	public static Block wildpigBlock;
     public void preInit(FMLPreInitializationEvent e) {
     	
 		tntArrow = new TNTArrow();
 		teleportArrow = new TeleportArrow();
+		wildpigBlock = new WildPigBlock();
 		//GameRegistry.registerItem(tntArrow, "tntArrow");
 		//GameRegistry.registerItem(teleportArrow, "teleportArrow");
 		
@@ -24,6 +30,8 @@ public class CommonProxy {
 		//GameRegistry.register(teleportArrow.getRegistryName() == null ? teleportArrow.setRegistryName("gfmods:teleportArrow") : teleportArrow);
 		GameRegistry.register(tntArrow.setRegistryName("gfmods:tntArrow"));
 		GameRegistry.register(teleportArrow.setRegistryName("gfmods:teleportArrow"));
+		GameRegistry.register(wildpigBlock.setRegistryName("gfmods:wildpigBlock"));
+		GameRegistry.register(new ItemBlock(wildpigBlock).setRegistryName("gfmods:wildpigBlock"));
     }
 
     public void init(FMLInitializationEvent e) {
@@ -39,6 +47,16 @@ public class CommonProxy {
         		new ItemStack(teleportArrow,1),
         		new ItemStack(Items.ender_pearl),
         		new ItemStack(Items.arrow)
+        		);
+        
+        GameRegistry.addShapelessRecipe(
+        		new ItemStack(wildpigBlock,1),
+        		"aba",
+        		"bcb",
+        		"aba",
+        		'c', Items.ender_pearl,
+        		'b', Items.porkchop,
+        		'a', Blocks.stone
         		);
     }
 

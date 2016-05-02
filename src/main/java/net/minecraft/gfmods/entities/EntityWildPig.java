@@ -6,11 +6,23 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIFollowParent;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAIMate;
+import net.minecraft.entity.ai.EntityAIPanic;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAITempt;
+import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.gfmods.Main;
 import net.minecraft.gfmods.MyMessage;
+import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
@@ -36,6 +48,8 @@ public class EntityWildPig extends EntityPig{
     boolean move_lock = false;
     boolean strike_done = false;
     Minecraft mc = Minecraft.getMinecraft();
+    double d0;
+    double d1;
     
     
     BlockPos rayBlockPos;
@@ -109,14 +123,9 @@ public class EntityWildPig extends EntityPig{
 	        	//System.out.println("Is being ridden!!");
 	        	EntityLivingBase entitylivingbase = (EntityLivingBase)this.getControllingPassenger();
 	        	this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
+	        	
 	        	//this.setpos = entitylivingbase.motionY;
 	        	//this.jumpMovementFactor = 0.1F;
-	        	if(this.worldObj.isRemote){
-		        	int i = 61680;
-		            int j = i % 65536;
-		            int k = i / 65536;
-		            OpenGlHelper.setLightmapTextureCoords(33985, (float)j, (float)k);
-	        	}
 
 	            /*
 	            if(!this.worldObj.isRemote)
@@ -142,7 +151,11 @@ public class EntityWildPig extends EntityPig{
 	        			this.motionZ += vec3d.zCoord * 0.1;
 	        			this.motionX += vec3d.xCoord * 0.1;
 	        			*/
-	        		    this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
+	        			/*
+	        		    this.d0 = (double)(-MathHelper.sin(this.rotationYaw * 0.017453292F)) *2;
+	        		    this.d1 = (double)MathHelper.cos(this.rotationYaw * 0.017453292F) *2;
+	        		    */
+	        		    this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, this.posX + this.d0, this.posY, this.posZ + this.d1, 0.0D, 0.0D, 0.0D, new int[2]);
 	        		    
 	        			//System.out.println("motionX:" + this.motionX);
 	        			//System.out.println("motionZ:" + this.motionZ);
@@ -157,10 +170,10 @@ public class EntityWildPig extends EntityPig{
     	        			if(ticks == 12) {
     	        				rayHit = this.rayTrace(3, 1);
         	        			rayBlockPos = rayHit.getBlockPos();
-        	        			//destroyPos = new BlockPos(this.posX, this.posY + 2, this.posZ);
+        	        			destroyPos = new BlockPos(rayBlockPos.getX(), rayBlockPos.getY()+1,rayBlockPos.getZ());
         	        			Main.network.sendToServer(new MyMessage(rayBlockPos.getX(), rayBlockPos.getY()+1, rayBlockPos.getZ()));
         	        			//System.out.println("Coords:" + rayBlockPos.getX() + "," + rayBlockPos.getY()+2 + "," + rayBlockPos.getZ());
-        	        			//destroyBlock(destroyPos);
+        	        			destroyBlock(destroyPos);
         	        			
         	        			ticks = 0;
     	        			}
@@ -476,6 +489,33 @@ public class EntityWildPig extends EntityPig{
 	    {
 	        super.jump();
 	        this.addStat(StatList.jump);
+	    }
+	    
+		public void destroyBlock(BlockPos pos){
+			BlockPos pos2;
+			//this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D, new int[2]);
+	        for(int i =-1; i <=1; i=i+1){
+	        	for(int j =-1; j <= 1; j=j+1){
+	        		for(int k=-1 ; k <= 1; k=k+1){
+	        			pos2 = pos.add(i, j, k);
+	        			this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, pos2.getX(), pos2.getY(), pos2.getZ(), 0.0D, 0.0D, 0.0D, new int[2]);
+	        			//this.worldObj.destroyBlock(pos.add(i, j, k), true);
+	        		}
+	        	}
+	        }
+		}
+		
+	    public void onStruckByLightning(EntityLightningBolt lightningBolt)
+	    {
+
+	    }
+	    
+	    protected void initEntityAI()
+	    {
+	        this.tasks.addTask(0, new EntityAISwimming(this));
+	        this.tasks.addTask(6, new EntityAIWander(this, 1.0D));
+	        this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
+	        this.tasks.addTask(8, new EntityAILookIdle(this));
 	    }
 
 }
