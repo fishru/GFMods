@@ -51,12 +51,10 @@ public class CommonProxy {
         
         GameRegistry.addShapelessRecipe(
         		new ItemStack(wildpigBlock,1),
-        		"aba",
-        		"bcb",
-        		"aba",
-        		'c', Items.ender_pearl,
-        		'b', Items.porkchop,
-        		'a', Blocks.stone
+        		new ItemStack(Items.ender_pearl),
+        		new ItemStack(Items.porkchop),
+        		new ItemStack(Blocks.stone),
+        		new ItemStack(Blocks.coal_block)
         		);
     }
 

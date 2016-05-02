@@ -3,18 +3,12 @@ package net.minecraft.gfmods.entities;
 import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMate;
-import net.minecraft.entity.ai.EntityAIPanic;
 import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAITempt;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -22,7 +16,6 @@ import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.gfmods.Main;
 import net.minecraft.gfmods.MyMessage;
-import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
@@ -47,7 +40,7 @@ public class EntityWildPig extends EntityPig{
     boolean second_jump_completed = false;
     boolean move_lock = false;
     boolean strike_done = false;
-    Minecraft mc = Minecraft.getMinecraft();
+    Minecraft mc;
     double d0;
     double d1;
     
@@ -205,6 +198,7 @@ public class EntityWildPig extends EntityPig{
 		            	//mc = Minecraft.getMinecraft();
 		            	
 		                //boolean jumpKeyDown = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
+		            	mc = Minecraft.getMinecraft();
 		            	boolean jumpKeyDown = mc.gameSettings.keyBindJump.isKeyDown();
 		                boolean strikeKeyDown = Keyboard.isKeyDown(Keyboard.KEY_X);
 		                

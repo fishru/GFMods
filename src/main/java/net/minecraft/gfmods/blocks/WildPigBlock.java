@@ -47,12 +47,13 @@ public class WildPigBlock extends Block {
     
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
     {
-    	//if (!worldIn.isRemote)
-        //{
+
     		worldIn.destroyBlock(pos, false);
+       if (!worldIn.isRemote)
+       {
             EntityWildPig entitywildpig = new EntityWildPig(worldIn);
             entitywildpig.setLocationAndAngles((double)pos.getX() + 0.5D, (double)pos.getY(), (double)pos.getZ() + 0.5D, 0.0F, 0.0F);
             worldIn.spawnEntityInWorld(entitywildpig);
-        //}
+        }
     }
 }
